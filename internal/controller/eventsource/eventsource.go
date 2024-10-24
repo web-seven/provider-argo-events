@@ -18,6 +18,7 @@ package eventsource
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -28,11 +29,13 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/connection"
 	"github.com/crossplane/crossplane-runtime/pkg/controller"
 	"github.com/crossplane/crossplane-runtime/pkg/event"
+	"github.com/crossplane/crossplane-runtime/pkg/meta"
 	"github.com/crossplane/crossplane-runtime/pkg/ratelimiter"
 	"github.com/crossplane/crossplane-runtime/pkg/reconciler/managed"
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 
 	esv1alpha1 "github.com/argoproj/argo-events/pkg/apis/eventsource/v1alpha1"
+	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 	"github.com/web-seven/provider-argo-events/apis/events/v1alpha1"
 	apisv1alpha1 "github.com/web-seven/provider-argo-events/apis/v1alpha1"
 	clients "github.com/web-seven/provider-argo-events/internal/client"
@@ -46,14 +49,11 @@ const (
 	errNotEventSource = "managed resource is not a EventSource custom resource"
 	errGetPC          = "cannot get ProviderConfig"
 	errGetCreds       = "cannot get credentials"
+	errListFailed     = "cannot list EventSources"
 )
 
 // A NoOpService does nothing.
 type NoOpService struct{}
-
-var (
-	newNoOpService = func(_ []byte) (interface{}, error) { return &NoOpService{}, nil }
-)
 
 // Setup adds a controller that reconciles EventSource managed resources.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
@@ -112,6 +112,9 @@ func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.E
 		return nil, errors.Wrap(err, errNewClient)
 	}
 
+	fmt.Println("Connect: ")
+	fmt.Println("")
+
 	return &external{kube: c.kube, client: argoClient}, nil
 }
 
@@ -123,13 +126,39 @@ type external struct {
 }
 
 func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.ExternalObservation, error) {
+
 	cr, ok := mg.(*v1alpha1.EventSource)
 	if !ok {
 		return managed.ExternalObservation{}, errors.New(errNotEventSource)
 	}
 
-	// These fmt statements should be removed in the real implementation.
-	fmt.Printf("Observing: %+v", cr)
+	var name = meta.GetExternalName(cr)
+	if name == "" {
+		return managed.ExternalObservation{}, nil
+	}
+
+	var evss *esv1alpha1.EventSourceList
+	evss, err := c.client.List(ctx, v1.ListOptions{
+		FieldSelector: fmt.Sprintf("metadata.name=%s", name),
+	})
+	if err != nil {
+		return managed.ExternalObservation{}, errors.Wrap(err, errListFailed)
+	}
+	evs := &esv1alpha1.EventSource{}
+	for _, item := range evss.Items {
+		if item.Name == name {
+			evs = item.DeepCopy()
+		}
+	}
+
+	res2print, _ := json.MarshalIndent(evs, "", "  ")
+	fmt.Println(string(res2print))
+
+	if evs.Name == "" {
+		return managed.ExternalObservation{}, nil
+	}
+
+	cr.Status.SetConditions(xpv1.Available())
 
 	return managed.ExternalObservation{
 		// Return false when the external resource does not exist. This lets
@@ -153,6 +182,8 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 	if !ok {
 		return managed.ExternalCreation{}, errors.New(errNotEventSource)
 	}
+	fmt.Printf("Creating: %+v", cr)
+	fmt.Println("")
 	es := &esv1alpha1.EventSource{}
 	es.Spec = cr.Spec.ForProvider
 	c.client.Create(ctx, es, v1.CreateOptions{})
@@ -170,7 +201,7 @@ func (c *external) Update(ctx context.Context, mg resource.Managed) (managed.Ext
 	}
 
 	fmt.Printf("Updating: %+v", cr)
-
+	fmt.Println("")
 	return managed.ExternalUpdate{
 		// Optionally return any details that may be required to connect to the
 		// external resource. These will be stored as the connection secret.
@@ -185,6 +216,7 @@ func (c *external) Delete(ctx context.Context, mg resource.Managed) error {
 	}
 
 	fmt.Printf("Deleting: %+v", cr)
+	fmt.Println("")
 
 	return nil
 }

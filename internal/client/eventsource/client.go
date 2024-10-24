@@ -13,13 +13,15 @@ const (
 )
 
 // ServiceClient wraps the functions to connect to argocd repositories
-type ServiceClient struct {
+type ServiceClient interface {
 	v1alpha1.EventSourceInterface
 }
 
 // NewEventSourceServiceClient creates a new API client from a set of config options, or fails fatally if the new client creation fails.
 func NewEventSourceServiceClient(config *clients.ClientOptions) ServiceClient {
-	repoIf := apiclient.NewForConfigOrDie(&config.Client).ArgoprojV1alpha1().EventSources(config.Namespace).(ServiceClient)
+	repoIf := apiclient.NewForConfigOrDie(&config.Client).
+		ArgoprojV1alpha1().
+		EventSources(config.Namespace).(ServiceClient)
 	return repoIf
 }
 
