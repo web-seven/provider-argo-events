@@ -4,9 +4,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: providerconfigusages.argoevents.crossplane.io
+  name: providerconfigusages.events.argo.crossplane.io
 spec:
-  group: argoevents.crossplane.io
+  group: events.argo.crossplane.io
   names:
     categories:
     - crossplane

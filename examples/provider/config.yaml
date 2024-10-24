@@ -12,7 +12,7 @@ type: Opaque
 data:
   # credentials: BASE64ENCODED_PROVIDER_CREDS
 ---
-apiVersion: argoevents.crossplane.io/v1alpha1
+apiVersion: events.argo.crossplane.io/v1alpha1
 kind: ProviderConfig
 metadata:
   name: example

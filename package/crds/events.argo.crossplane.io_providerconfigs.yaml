@@ -4,9 +4,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
-  name: providerconfigs.argoevents.crossplane.io
+  name: providerconfigs.events.argo.crossplane.io
 spec:
-  group: argoevents.crossplane.io
+  group: events.argo.crossplane.io
   names:
     kind: ProviderConfig
     listKind: ProviderConfigList
@@ -103,8 +103,11 @@ spec:
                 required:
                 - source
                 type: object
+              namespace:
+                type: string
             required:
             - credentials
+            - namespace
             type: object
           status:
             description: A ProviderConfigStatus reflects the observed state of a ProviderConfig.

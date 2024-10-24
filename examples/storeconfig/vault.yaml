@@ -1,4 +1,4 @@
-apiVersion: argoevents.crossplane.io/v1alpha1
+apiVersion: events.argo.crossplane.io/v1alpha1
 kind: StoreConfig
 metadata:
   name: vault
