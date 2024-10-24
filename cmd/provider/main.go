@@ -37,10 +37,10 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/ratelimiter"
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 
-	"github.com/crossplane/provider-argoevents/apis"
-	"github.com/crossplane/provider-argoevents/apis/v1alpha1"
-	argoevents "github.com/crossplane/provider-argoevents/internal/controller"
-	"github.com/crossplane/provider-argoevents/internal/features"
+	"github.com/web-seven/provider-argo-events/apis"
+	"github.com/web-seven/provider-argo-events/apis/v1alpha1"
+	argoevents "github.com/web-seven/provider-argo-events/internal/controller"
+	"github.com/web-seven/provider-argo-events/internal/features"
 )
 
 func main() {
@@ -60,7 +60,7 @@ func main() {
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	zl := zap.New(zap.UseDevMode(*debug))
-	log := logging.NewLogrLogger(zl.WithName("provider-argoevents"))
+	log := logging.NewLogrLogger(zl.WithName("provider-argo-events"))
 	if *debug {
 		// The controller-runtime runs with a no-op logger by default. It is
 		// *very* verbose even at info level, so we only provide it a real
@@ -86,7 +86,7 @@ func main() {
 		// server. Switching to Leases only and longer leases appears to
 		// alleviate this.
 		LeaderElection:             *leaderElection,
-		LeaderElectionID:           "crossplane-leader-election-provider-argoevents",
+		LeaderElectionID:           "crossplane-leader-election-provider-argo-events",
 		LeaderElectionResourceLock: resourcelock.LeasesResourceLock,
 		LeaseDuration:              func() *time.Duration { d := 60 * time.Second; return &d }(),
 		RenewDeadline:              func() *time.Duration { d := 50 * time.Second; return &d }(),

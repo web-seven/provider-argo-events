@@ -1,6 +1,6 @@
-# provider-argoevents
+# provider-argo-events
 
-`provider-argoevents` is a minimal [Crossplane](https://crossplane.io/) Provider
+`provider-argo-events` is a minimal [Crossplane](https://crossplane.io/) Provider
 that is meant to be used as a argoevents for implementing new Providers. It comes
 with the following features that are meant to be refactored:
 

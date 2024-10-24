@@ -20,15 +20,15 @@ package apis
 import (
 	"k8s.io/apimachinery/pkg/runtime"
 
-	samplev1alpha1 "github.com/crossplane/provider-argoevents/apis/sample/v1alpha1"
-	argoeventsv1alpha1 "github.com/crossplane/provider-argoevents/apis/v1alpha1"
+	esv1alpha1 "github.com/web-seven/provider-argo-events/apis/events/v1alpha1"
+	argoeventsv1alpha1 "github.com/web-seven/provider-argo-events/apis/v1alpha1"
 )
 
 func init() {
 	// Register the types with the Scheme so the components can map objects to GroupVersionKinds and back
 	AddToSchemes = append(AddToSchemes,
 		argoeventsv1alpha1.SchemeBuilder.AddToScheme,
-		samplev1alpha1.SchemeBuilder.AddToScheme,
+		esv1alpha1.SchemeBuilder.AddToScheme,
 	)
 }
 

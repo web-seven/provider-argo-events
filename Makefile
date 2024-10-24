@@ -1,6 +1,6 @@
 # ====================================================================================
 # Setup Project
-PROJECT_NAME := provider-argoevents
+PROJECT_NAME := provider-argo-events
 PROJECT_REPO := github.com/crossplane/$(PROJECT_NAME)
 
 PLATFORMS ?= linux_amd64 linux_arm64
@@ -30,7 +30,7 @@ GO111MODULE = on
 # ====================================================================================
 # Setup Images
 
-IMAGES = provider-argoevents
+IMAGES = provider-argo-events
 -include build/makelib/imagelight.mk
 
 # ====================================================================================
@@ -40,12 +40,12 @@ XPKG_REG_ORGS ?= xpkg.upbound.io/crossplane
 # NOTE(hasheddan): skip promoting on xpkg.upbound.io as channel tags are
 # inferred.
 XPKG_REG_ORGS_NO_PROMOTE ?= xpkg.upbound.io/crossplane
-XPKGS = provider-argoevents
+XPKGS = provider-argo-events
 -include build/makelib/xpkg.mk
 
 # NOTE(hasheddan): we force image building to happen prior to xpkg build so that
 # we ensure image is present in daemon.
-xpkg.build.provider-argoevents: do.build.images
+xpkg.build.provider-argo-events: do.build.images
 
 fallthrough: submodules
 	@echo Initial setup complete. Running make again . . .

@@ -29,6 +29,7 @@ import (
 type ProviderConfigSpec struct {
 	// Credentials required to authenticate to this provider.
 	Credentials ProviderCredentials `json:"credentials"`
+	Namespace   string              `json:"namespace"`
 }
 
 // ProviderCredentials required to authenticate.

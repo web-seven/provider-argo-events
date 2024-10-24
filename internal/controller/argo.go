@@ -20,8 +20,8 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/controller"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	"github.com/crossplane/provider-argoevents/internal/controller/config"
-	"github.com/crossplane/provider-argoevents/internal/controller/mytype"
+	"github.com/web-seven/provider-argo-events/internal/controller/config"
+	"github.com/web-seven/provider-argo-events/internal/controller/eventsource"
 )
 
 // Setup creates all ArgoEvents controllers with the supplied logger and adds them to
@@ -29,7 +29,7 @@ import (
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
 		config.Setup,
-		mytype.Setup,
+		eventsource.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {
 			return err
